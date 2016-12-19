@@ -142,20 +142,15 @@ $(document).ready(function() {
 		});
 	}
 
-	var gif_params = {};
-
-	function set_gif_params(value, data) {
-		gif_params[value] = data;
-	}
-
+	gif_params = {};
 	// IN / OUT SETTING
 	$('.in-point-set').click(function() {
 		var current_time = $('#videoPreview')[0].currentTime;
-		set_gif_params('in', current_time);
+		gif_params['in'] = current_time;
 	});
 
 	$('.out-point-set').click(function() {
 		var current_time = $('#videoPreview')[0].currentTime;
-		set_gif_params('out', current_time)
+		gif_params['out'] = current_time;
 	});
 });

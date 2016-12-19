@@ -1,7 +1,15 @@
 var ffmpeg = require('fluent-ffmpeg');
 
+function createGif(params) {
+  // parameter dictinary
+  params
+}
+
+
+
 var command = ffmpeg("N:\\Documents\\GitLab\\gif\\clip.mp4")
   .size('320x240')
+  .setStartTime('')
   .outputOptions('-vf', 'fps=15,palettegen')
   .on('error', function(err) {
     console.log('An error occurred: ' + err.message);
