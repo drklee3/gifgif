@@ -11,7 +11,6 @@
 		<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 		<script src="./jquery-3.1.0.min.js"></script>
 		<script type="text/javascript" src="./jquery-ui.min.js"></script>
-		<script type="text/javascript" src="./ui.js"></script>
 	</head>
 	<body>
 		<div class="nav-bar">
@@ -50,7 +49,11 @@
 								<input type="number" name="in_point_minute" id="in_point_minute" value="0" min="0" max="60" step="1" class="in_out_point u-pull-left">
 								<input type="number" name="in_point_second" id="in_point_second" value="0" min="0" max="60" step="1" class="in_out_point u-pull-left">
 
+								<a class="button button-back-second" href="#"><<</a>
+								<a class="button button-back-frame" href="#"><</a>
 								<a class="button button-primary button-play" href="#">Play</a>
+								<a class="button button-forward-second" href="#">></a>
+								<a class="button button-forward-frame" href="#">>></a>
 
 								<input type="number" name="out_point_hour" id="out_point_hour" value="0" min="0" max="60" step="1" class="in_out_point u-pull-right">
 								<input type="number" name="out_point_minute" id="out_point_minute" value="0" min="0" max="60" step="1" class="in_out_point u-pull-right">
@@ -78,7 +81,11 @@
 								<input class="u-full-width" type="number" placeholder="100%" value="100" id="fps">
 							</div>
 						</div>
-						<input class="button-primary u-full-width" type="submit" value="Create Gif" onclick="createGif();" style="margin-top: 20px;">
+						<div>
+							<input class="button-primary u-pull-right" type="submit" value="Create Gif" onclick="createGif();" style="margin-top: 20px;">
+							<img src="./images/tzuyu.png" class="tzuyu">
+						</div>
+						
 					</form>
 				</div>
 				<div class="twelve columns">
@@ -96,7 +103,7 @@
 		require('./renderer.js');
 		require('./controls.js');
 		//require('./gif.js');
-		//require('./ui.js');
+		require('./ui.js');
 	</script>
 	<script>if (window.module) module = window.module;</script>
 </html>

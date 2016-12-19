@@ -13,6 +13,24 @@ hr {
 	margin-bottom: 10px;
 }
 
+.button {
+	color: #ffffff;
+}
+
+.button:hover {
+	color: #ffffff;
+}
+
+.button:focus {
+	color: #ffffff;
+	border-color: #bbb;
+}
+
+.button:active {
+	color: #33C3F0;
+	border-color: #33C3F0;
+}
+
 .info p {
 	font-size: 15px;
 	margin-bottom: 0px;
@@ -73,6 +91,7 @@ hr {
 
 .center {
 	text-align: center;
+	margin: 0px auto;
 }
 
 .in-out-text {
@@ -137,4 +156,11 @@ hr {
 .video-left-padding {
 	height: 400px;
 	float: left;
+}
+
+.tzuyu {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	z-index: -99;
 }
