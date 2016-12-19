@@ -1,0 +1,140 @@
+body {
+	background-image: url(../images/bg.svg);
+	color: #ffffff;
+	-webkit-app-region: no-drag;
+}
+
+input {
+	color: #000;
+}
+
+hr {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.info p {
+	font-size: 15px;
+	margin-bottom: 0px;
+	opacity: 0.8;
+}
+
+.nav-bar {
+	display: inline-block;
+	position: fixed;
+	top: 0px;
+	height: 50px;
+	width: 100%;
+	z-index: -99;
+	-webkit-user-select: none;
+	-webkit-app-region: drag;
+}
+
+.nav-buttons {
+	z-index: 99;
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	-webkit-app-region: no-drag;
+}
+
+.nav-buttons a {
+	display: inline-block;
+	text-align: center;
+	line-height: 350%;
+	font-size: 15px;
+	text-decoration: none;
+	color: #ffffff;
+	width: 50px;
+	height: 50px;
+}
+
+.min:hover {
+	background-color: #3498db;
+}
+
+.close:hover {
+	background-color: #e74c3c;
+}
+
+#videoPreview {
+	position: relative;
+	background-color: #000000;
+	height: 400px;
+	text-align: center;
+	margin: 0 auto;
+}
+
+.in_out_point {
+	width: 60px;
+	border-radius: 0px !important;
+	margin-bottom: 0px;
+}
+
+.center {
+	text-align: center;
+}
+
+.in-out-text {
+	margin-bottom: 0px;
+}
+
+.button-play {
+	margin-bottom: 0px;
+}
+
+.progressBar {
+	position: relative;
+	width: 100%;
+	height: 10px;
+	background-color: #ffffff;
+	margin-bottom: 5px;
+}
+
+.in-out-bar-full {
+	position: relative;
+	width: 100%;
+	height: 10px;
+	background-color: #ffffff;
+	margin-bottom: 5px;
+}
+
+.timeBar {
+	position: absolute;
+	z-index: 888;
+	top: 0;
+	left: 0;
+	width: 0;
+	height: 100%;
+	background-color: #1EAEDB;
+}
+
+.in-out-bar {
+	position: absolute;
+	z-index: 999;
+	top: 0;
+	height: 100%;
+	background-color: #f03358;
+}
+
+.gif-crop {
+	position: absolute;
+	z-index: 999;
+	top: 0;
+	left: 0;
+	height: inherit;
+	width: inherit;
+	border: 1px solid red;
+}
+
+.crop-wrapper {
+	position: absolute;
+	height: inherit;
+	width: 100%;
+	z-index: 999;
+}
+
+.video-left-padding {
+	height: 400px;
+	float: left;
+}
