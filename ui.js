@@ -1,5 +1,54 @@
 $(document).ready(function() {
 
+	/* GIF */
+	ffmpeg = require('fluent-ffmpeg');
+
+	function createGif(params) {
+	  // parameter dictinary
+	  params
+
+	  var command = ffmpeg("N:\\Documents\\GitLab\\gif\\clip.mp4")
+	    .size('320x240')
+	    .setStartTime('')
+	    .outputOptions('-vf', 'fps=15,palettegen')
+	    .on('error', function(err) {
+	      console.log('An error occurred: ' + err.message);
+	    })
+	    .on('end', function() {
+	      console.log('palette created!');
+
+
+	      var command = ffmpeg("N:\\Documents\\GitLab\\gif\\clip.mp4")
+	        .addInput('palette.png')
+	        .outputOptions([
+	          '-v warning',
+	          '-filter_complex', 'fps=15,scale=320:-1:flags=lanczos[x];[x][1:v]paletteuse'
+	          ])
+	        .on('error', function(err) {
+	          console.log('An error occurred: ' + err.message);
+	        })
+	        .on('end', function() {
+	          console.log('gif created!');
+	        })
+	        .save('output.gif');
+	    })
+	    .save('palette.png');
+
+	};
+
+	function getVideoInfo(video_path) {
+	  ffmpeg.ffprobe(video_path, function(err, data) {
+	  	console.dir(data);
+	  	var results = JSON.parse(data);
+	    return results;
+	  })
+	};
+
+	/*END GIF*/
+
+
+
+
 	var URL = window.URL || window.webkitURL
 
 	resizeCrop();
@@ -28,7 +77,11 @@ $(document).ready(function() {
 
 		console.log(this.files);
 		console.log(this.files[0].size);
-		console.log(this.files[0].path);
+		path = this.files[0].path;
+		path = path.replace(/\\/g, "\\\\");
+		var video_info = getVideoInfo(path);
+		console.dir(video_info);
+		console.log(video_info['streams'][0]['r_frame_rate'])
 		renderVideo(this.files[0]);
 	});
 
@@ -104,7 +157,7 @@ $(document).ready(function() {
 	// IN OUT DRAGGER
 	$(".in-out-bar").resizable({
 		containment: ".in-out-bar-full",
-		handles: "e, w"
+		handles: "e"
 	});
 
 	// CROP SELECTION
