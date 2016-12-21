@@ -53,6 +53,8 @@ $(document).ready(function() {
 	function ffprobe_callback(video_data_raw) {
 		video_data = {};
 		video_data['fps'] = video_data_raw['streams'][0]['r_frame_rate'];
+		video_data['width'] = video_data_raw['streams'][0]['width'];
+		video_data['height'] = video_data_raw['streams'][0]['height'];
 		console.log(video_data)
 	}
 
