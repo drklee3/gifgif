@@ -36,18 +36,25 @@ $(document).ready(function() {
 
 	};
 
-	function getVideoInfo(video_path) {
+	function getVideoInfo(video_path, ffprobe_callback) {
 	  ffmpeg.ffprobe(video_path, function(err, data) {
-	  	console.dir(data);
-	  	var results = JSON.parse(data);
-	    return results;
+		video_data_raw = JSON.parse(JSON.stringify(data));
+		console.warn('finished probe');
+		ffprobe_callback(video_data_raw);
 	  })
 	};
 
 	/*END GIF*/
 
 
+	/* VIDEO PLAYER */
 
+
+	function ffprobe_callback(video_data_raw) {
+		video_data = {};
+		video_data['fps'] = video_data_raw['streams'][0]['r_frame_rate'];
+		console.log(video_data)
+	}
 
 	var URL = window.URL || window.webkitURL
 
@@ -62,32 +69,29 @@ $(document).ready(function() {
 			alert('failed to play');
 		}
 		var video_url = URL.createObjectURL(file);
-		console.log(video_url);
 		$('#videoPreview').attr('src', video_url);
 
 	};
 
 	$('#videoPreview').on('loadeddata', function() {
 		var video_width = $('#videoPreview').width();
-		console.log(video_width);
 		resizeCrop();
 	});
 
 	$('#inputFile').change(function() {
 
-		console.log(this.files);
-		console.log(this.files[0].size);
+		//console.log(this.files);
+		//console.log(this.files[0].size);
 		path = this.files[0].path;
+		//escape backslashes from path
 		path = path.replace(/\\/g, "\\\\");
-		var video_info = getVideoInfo(path);
-		console.dir(video_info);
-		console.log(video_info['streams'][0]['r_frame_rate'])
+		getVideoInfo(path, ffprobe_callback);
 		renderVideo(this.files[0]);
 	});
 
 
 	//VIDEO PLAYER
-	
+
 	var video = $('#videoPreview');
 
 	$('.button-play').on('click', function() {
@@ -102,11 +106,62 @@ $(document).ready(function() {
 		return false;
 	});
 
+
+	function getFps() {
+		// default frame time (in case ffprobe is not finished yet)
+		frameTime = 1 / 30;
+
+		// get current file frame time
+		var frameTime_raw = video_data['fps'];
+		var frameTime_split = frameTime_raw.split("/");
+		var frameTime = frameTime_split[0] / frameTime_split[1];
+		return frameTime;
+	}
+
+	// FINE SEEKING SHIT
+	$('.button-back-second').click(function() {
+		var vid = $('#videoPreview')[0];
+		vid.currentTime -= 1;
+	});
+	$('.button-back-frame').click(function() {
+		var vid = $('#videoPreview')[0];
+		vid.currentTime -= 1 / getFps();
+	});
+	$('.button-forward-frame').click(function() {
+		var vid = $('#videoPreview')[0];
+		vid.currentTime += 1 / getFps();
+	});
+	$('.button-forward-second').click(function() {
+		var vid = $('#videoPreview')[0];
+		vid.currentTime += 1;
+	});
+
+	// IN / OUT BUTTONS
+	$('.in-point-set').click(function() {
+		var currentPos = video[0].currentTime;
+		var currentHour = Math.floor(currentPos / 3600);
+		var currentMin = Math.floor((currentPos - (currentHour * 3600)) / 60);
+		var currentSec = currentPos - (currentHour * 3600) - (currentMin * 60);
+		$('#in_point_hour').val(currentHour);
+		$('#in_point_minute').val(currentMin);
+		$('#in_point_second').val(currentSec.toFixed(2));
+	});
+
+	$('.out-point-set').click(function() {
+		var currentPos = video[0].currentTime;
+		var currentHour = Math.floor(currentPos / 3600);
+		var currentMin = Math.floor((currentPos - (currentHour * 3600)) / 60);
+		var currentSec = currentPos - (currentHour * 3600) - (currentMin * 60);
+		$('#out_point_hour').val(currentHour);
+		$('#out_point_minute').val(currentMin);
+		$('#out_point_second').val(currentSec.toFixed(2));
+	});
+
 	//get HTML5 video time duration
 	video.on('loadedmetadata', function() {
 	    $('.duration').text(video[0].duration);
 	});
-	 
+
 	//update HTML5 video current play time
 	video.on('timeupdate', function() {
 	    var currentPos = video[0].currentTime; //Get currenttime
@@ -133,14 +188,14 @@ $(document).ready(function() {
 	        updatebar(e.pageX);
 	    }
 	});
-	 
+
 	//update Progress Bar control
 	var updatebar = function(x) {
 	    var progress = $('.progressBar');
 	    var maxduration = video[0].duration; //Video duraiton
 	    var position = x - progress.offset().left; //Click pos
 	    var percentage = 100 * position / progress.width();
-	 
+
 	    //Check within range
 	    if(percentage > 100) {
 	        percentage = 100;
@@ -148,7 +203,7 @@ $(document).ready(function() {
 	    if(percentage < 0) {
 	        percentage = 0;
 	    }
-	 
+
 	    //Update progress bar and video currenttime
 	    $('.timeBar').css('width', percentage+'%');
 	    video[0].currentTime = maxduration * percentage / 100;
@@ -171,9 +226,6 @@ $(document).ready(function() {
 		});
 
 	function resizeCrop() {
-
-		
-		console.log('resizing');
 		var video_width = $("#videoPreview").width();
 
 		// center the video
@@ -182,7 +234,6 @@ $(document).ready(function() {
 		$(".video-left-padding").css('width', padding_width);
 
 		//resize crop zone
-		console.log(video_width);
 		$(".crop-wrapper").css({
 			'width': video_width,
 			'left': padding_width
