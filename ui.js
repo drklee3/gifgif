@@ -30,7 +30,9 @@ $(document).ready(function() {
 			})
 			.setStartTime(gif_vars['in_format'])
 			.duration(gif_vars['duration'])
-			.outputOptions('-c copy')
+			.outputOptions([
+				'-filter_complex', 'crop=' + gif_vars['crop'] + ',scale=' + gif_vars['scaled_size'] + ':flags=lanczos'
+				])
 			.on('error', function(err) {
 				console.log('An error occurred: ' + err.message);
 			})
@@ -52,7 +54,7 @@ $(document).ready(function() {
 			.addInput('palette.png')
 			.outputOptions([
 				'-v warning',
-				'-filter_complex', 'fps=' + gif_vars['fps'] +',crop=' + gif_vars['crop'] + ',flags=lanczos[x];[x][1:v]paletteuse,scale=' + gif_vars['scaled_size']
+				'-filter_complex', 'fps=' + gif_vars['fps'] + ',paletteuse=dither=sierra2_4a'
 				])
 			.on('start', function(commandLine) {
 				console.log('Spawned Ffmpeg with command: ' + commandLine);
@@ -140,12 +142,12 @@ $(document).ready(function() {
 		var x = real_vid_wid*ratio_width;
 		var y = real_vid_hei*ratio_height;
 
-		// snap to edges
-		if (out_w > 1910) {
-			out_w = 1920;
+		// snap to edges within 15 pixels
+		if (out_w > video_data['width'] - 15) {
+			out_w = video_data['width'];
 		}
-		if (out_h > 1070) {
-			out_h = 1080;
+		if (out_h > video_data['height'] - 15) {
+			out_h = video_data['height'];
 		}
 
 		// prevent negative values
@@ -466,7 +468,7 @@ $(document).ready(function() {
 		//update out point
 		if ("in" in gif_params) {
 			var in_point = parseFloat(gif_params['in']);
-			var out_point = in_point + parseFloat(duration);
+			var out_point = in_point + parseFloat	(duration);
 			gif_params['out'] = out_point;
 
 			set_out_point(out_point);
