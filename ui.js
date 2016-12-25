@@ -282,12 +282,12 @@ $(document).ready(function() {
 	var queue_status = false;
 
 	$("#queue_button").click(function() {
-		console.log('clicked')
 		if (queue_status) { // HIDE QUEUE
+			// button css
 			css = {
 				bottom: 0
 			}
-
+			// for the container
 			css2 = {
 				top: 850
 			}
@@ -298,19 +298,18 @@ $(document).ready(function() {
 				bottom: $(document).height() - 100
 			}
 			css2 = {
-				top: 50
+				top: 100
 			}
 			$("#queue_arrow").removeClass("fa-chevron-up").addClass("fa-chevron-down")
 			queue_status = true;
 		}
 		$(this).animate(css, 700, 'easeOutQuint');
 		$("#queue_container").animate(css2, 700, 'easeOutQuint');
-
-	})
+	});
 
 	$(".queue_item").click(function() {
 		var path = $(this).text();
 		queue.open_folder(path);
-	})
+	});
 
 });
