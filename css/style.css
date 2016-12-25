@@ -113,15 +113,6 @@ hr {
 	cursor: pointer;
 }
 
-.duration-bar-full {
-	position: relative;
-	width: 100%;
-	height: 10px;
-	background-color: #ffffff;
-	margin-top: 35px;
-	margin-bottom: 5px;
-}
-
 .timeBar {
 	position: absolute;
 	z-index: 888;
@@ -132,14 +123,6 @@ hr {
 	background-color: #1EAEDB;
 }
 
-.duration-bar {
-	position: absolute;
-	z-index: 999;
-	top: 0;
-	height: 100%;
-	width: 20%;
-	background-color: #f03358;
-}
 
 .gif-crop {
 	position: absolute;
@@ -170,4 +153,39 @@ hr {
 	bottom: 0;
 	right: 0;
 	z-index: -99;
+}
+
+
+/** QUEUE **/
+
+#queue_button {
+	position: fixed;
+	left: 20px;
+	width: 200px;
+	height: 50px;
+	background-color: #33c3f0;
+	text-align: center;
+	cursor: pointer;
+	z-index: 9999;
+}
+
+#queue_button p {
+	margin-top: 7px;
+	font-size: 20px;
+}
+
+#queue_numbers {
+	color: #222;
+}
+
+#queue_container {
+	position: fixed;
+	left: 0px;
+	z-index: 9998;
+	width: 60%;
+	height: 100%;
+	background-image: url(../images/bg.svg);
+	border-radius: 2px;
+	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	opacity: 0.9;
 }
