@@ -96,8 +96,8 @@ hr {
 	margin: 0px auto;
 }
 
-.in-out-text {
-	margin-bottom: 0px;
+.io-point {
+	width: 150px;
 }
 
 .button-play {
@@ -168,6 +168,7 @@ hr {
 	cursor: pointer;
 	z-index: 9999;
 }
+
 
 #queue_button p {
 	margin-top: 7px;
