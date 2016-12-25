@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="css/normalize.css">
 	<link rel="stylesheet" href="css/skeleton.css">
 	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
 	<link rel="stylesheet" href="./jquery-ui.min.css">
 	<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 	<script src="./jquery-3.1.0.min.js"></script>
@@ -19,6 +20,40 @@
 	<div class="nav-buttons">
 		<a href="#" id="min-btn" class="min">_</a><a href="#" id="close-btn" class="close">X</a>
 	</div>
+	<!-- QUEUE -->
+	<div id="queue_button" style="bottom: 0px;">
+		<p><i id="queue_arrow" class="fa fa-chevron-up" aria-hidden="true"></i> queue <code id="queue_numbers">00/00</code></p>
+	</div>
+
+	<div id="queue_container" style="top: 850px;">
+		<div class="container">
+			<div class="row">
+				<div class="twelve columns">
+					<table class="u-full-width" style="margin-top: 75px;">
+						<thead>
+							<tr>
+								<th>File</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>N:\Documents\GitLab\gif\output0001.gif</td>
+								<td>creating palette</td>
+							</tr>
+							<tr>
+								<td>another example path</td>
+								<td>creating gif</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+
+	<!-- MAIN CONTENT -->
 	<div class="container">
 		<div class="row" style="margin-top: 5%">
 			<div class="twelve columns">
@@ -62,17 +97,21 @@
 					</div>
 					<hr>
 					<div class="row">
-						<div class="six columns">
+						<div class="four columns">
 							<label for="inputFile">Input File</label>
 							<input class="u-full-width" type="file" accept="video/*" id="inputFile" style="color:#ffffff;">
+						</div>
+						<div class="two columns">
+							<label for="duration">duration (s)</label>
+							<input type="number" name="duration_second" id="duration" value="0" min="0" max="60" step="1" class="u-full-width">
 						</div>
 						<div class="two columns">
 							<label for="fps">fps</label>
 							<input class="u-full-width" type="number" placeholder="20" value="20" min="1" max="60"  id="fps">
 						</div>
 						<div class="two columns">
-							<label for="fps">% speed</label>
-							<input class="u-full-width" type="number" placeholder="100" value="100" min="1" max="100" id="fps">
+							<label for="speed">% speed</label>
+							<input class="u-full-width" type="number" placeholder="100" value="100" min="1" max="1000" id="speed">
 						</div>
 						<div class="two columns">
 							<label for="scale_percentage">% scale</label>
@@ -81,14 +120,14 @@
 					</div>
 					<div class="row">
 						<div class="three columns">
-							<p style="margin-bottom: 0px;"><b>duration (seconds)</b></p>
-							<input type="number" name="duration_second" id="duration" value="0" min="0" max="60" step="1" class="u-full-width">
+							<label>
+								<input type="checkbox" id="mute_audio">
+								<span class="label-body">mute audio</span>
+							</label>
 						</div>
-						<div class="nine columns">
-							<div class="duration-bar-full">
-								<div class="duration-bar"></div>
-							</div>
-						</div>
+					</div>
+					<div class="row">
+						
 					</div>
 					<div>
 					<p class="u-pull-left info">GifGif v1.0 - Node v<script>document.write(process.versions.node)</script> - Chromium v<script>document.write(process.versions.chrome)</script> - Electron v<script>document.write(process.versions.electron)</script></p>

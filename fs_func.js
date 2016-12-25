@@ -37,9 +37,9 @@ function new_filename(file, callback) {
 	if_exist(file, function(err, isFile) {
 		if (isFile) { 						// if file exists
 			file = increment_file(file);	// generate new filename
-			new_filename(file);				// check again if exists
+			new_filename(file, callback);	// check again if exists
 		} else {
-			create_file(file);				// create new file
+			callback(file);					// function callback
 		}
 	});
 }
@@ -82,4 +82,8 @@ function pad_num(number) {
 	return padded;
 }
 
-new_filename('test.txt')
+//test run
+//
+//new_filename('test.txt', function(file) {
+//	console.log(file);
+//})
