@@ -4,6 +4,8 @@ $(document).ready(function() {
 
 	/* GIF */
 	ffmpeg = require('fluent-ffmpeg');
+	fs = require("fs");
+	io = require("./fs_func.js");
 
 	function padNum(num) {
 		var s = num + ""
@@ -45,12 +47,12 @@ $(document).ready(function() {
 					create_gfy(gif_vars);
 				}
 			})
-			.save(gif_vars['trimmed_vid']);
+			.save('temp_vid_trimmed.mp4');
 	}
 
 	function create_gif(gif_vars) {
 		// CREATE GIF
-		var command = ffmpeg(gif_vars['trimmed_vid'])
+		var command = ffmpeg('temp_vid_trimmed.mp4')
 			.addInput('palette.png')
 			.outputOptions([
 				'-v warning',
@@ -70,10 +72,7 @@ $(document).ready(function() {
 
 	function create_gfy(gif_vars) {
 		var command = ffmpeg(gif_vars['trimmed_vid'])
-			.outputOptions([
-				'-v warning',
-				'-filter_complex', 'fps=' + gif_vars['fps'] +',crop=' + gif_vars['crop'] + ',scale=' + gif_vars['scaled_size'] + ':flags=lanczos'
-				])
+			.outputOptions('-v warning')
 			.on('start', function(commandLine) {
 				console.log('Spawned Ffmpeg with command: ' + commandLine);
 			})
@@ -161,10 +160,10 @@ $(document).ready(function() {
 		console.log('w/h: ' + out_w + '/' + out_h);
 		console.log('x/y: ' + x + '/' + y);
 
-		gif_params['width'] = out_w
-		gif_params['height'] = out_h
-		gif_params['x'] = x
-		gif_params['y'] = y
+		gif_params['width'] = out_w.toFixed(2)
+		gif_params['height'] = out_h.toFixed(2)
+		gif_params['x'] = x.toFixed(2)
+		gif_params['y'] = y.toFixed(2)
 	}
 
 	function createGif(output_type) {
@@ -468,7 +467,7 @@ $(document).ready(function() {
 		//update out point
 		if ("in" in gif_params) {
 			var in_point = parseFloat(gif_params['in']);
-			var out_point = in_point + parseFloat	(duration);
+			var out_point = in_point + parseFloat(duration);
 			gif_params['out'] = out_point;
 
 			set_out_point(out_point);
