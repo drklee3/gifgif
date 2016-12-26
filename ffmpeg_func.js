@@ -1,6 +1,7 @@
 var exports = module.exports = {};
 
 ffmpeg = require('fluent-ffmpeg');
+queue = require("./queue_func.js");
 
 exports.padNum = function(num) {
 	var s = num + ""
@@ -21,6 +22,8 @@ exports.formatTime = function(in_time) {
 }
 
 exports.trim_video = function(gif_vars) {
+	queue.modify_queue(gif_vars['filename'], "trim");
+
 	var video_options = '-filter_complex crop=' + gif_vars['crop'] + ',scale=' + gif_vars['scaled_size'] + ':flags=lanczos';
 	var speed = gif_vars['speed'];
 
@@ -51,6 +54,8 @@ exports.trim_video = function(gif_vars) {
 }
 
 exports.create_gif = function(gif_vars) {
+	queue.modify_queue(gif_vars['filename'], "gif");
+
 	var gif_options = '-filter_complex fps=' + gif_vars['fps'] + ',paletteuse=dither=sierra2_4a';
 
 	// CREATE GIF
@@ -67,12 +72,15 @@ exports.create_gif = function(gif_vars) {
 			console.log('An error occurred: ' + err.message);
 		})
 		.on('end', function() {
+			queue.modify_queue(gif_vars['filename'], "finished");
 			console.log('gif created!');
 		})
 		.save(gif_vars['filename'] + '.gif');
 }
 
 exports.create_gfy = function(gif_vars) {
+	queue.modify_queue(gif_vars['filename'], "gfy");
+
 	var mute = gif_vars['mute_audio'];
 	var gfy_options = "-v warning";
 	if (mute) {
@@ -88,12 +96,15 @@ exports.create_gfy = function(gif_vars) {
 			console.log('An error occurred: ' + err.message);
 		})
 		.on('end', function() {
+			queue.modify_queue(gif_vars['filename'], "finished");
 			console.log('gfy created!');
 		})
 		.save(gif_vars['filename'] + '.mp4');
 }
 
 exports.create_palette = function(gif_vars) {
+	queue.modify_queue(gif_vars['filename'], "palette");
+
 	var palette_options = '-vf fps=' + gif_vars['fps'] + ',palettegen';
 
 	// CREATE PALETTE
@@ -220,6 +231,7 @@ exports.createGif = function(output_type) {
 
 		gif_vars['filename'] = file.replace(extension, ""); // filename without extension
 
+		queue.add_queue("placeholder path", gif_vars['filename'], "starting")
 		trim_video(gif_vars);
 	})
 }

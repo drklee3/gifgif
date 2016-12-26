@@ -6,7 +6,7 @@ $(document).ready(function() {
 	fs = require("fs");
 	io = require("./fs_func.js");
 	gifgif = require("./ffmpeg_func.js");
-	queue = require("./queue_func.js")
+	queue = require("./queue_func.js");
 
 
 
@@ -294,17 +294,32 @@ $(document).ready(function() {
 			$("#queue_arrow").removeClass("fa-chevron-down").addClass("fa-chevron-up")
 			queue_status = false;
 		} else {	// SHOW QUEUE
-			css = {
-				bottom: $(document).height() - 100
+
+			var button_bottom = $("#queue_content").height()
+
+			var container_top = $(document).height() - $("#queue_content").height()
+			if (container_top <= 200) {
+				container_top = 200;
+				button_bottom = 650;
+				$("#queue_container").css("overflow-y", "scroll")
+			} else {
+				$("#queue_container").css("overflow-y", "")
 			}
+
+			//button location
+			css = {
+				bottom: button_bottom
+			}
+
+			// container location
 			css2 = {
-				top: 100
+				top: container_top
 			}
 			$("#queue_arrow").removeClass("fa-chevron-up").addClass("fa-chevron-down")
 			queue_status = true;
 		}
-		$(this).animate(css, 700, 'easeOutQuint');
-		$("#queue_container").animate(css2, 700, 'easeOutQuint');
+		$(this).animate(css, 500, 'easeOutQuint');
+		$("#queue_container").animate(css2, 500, 'easeOutQuint');
 	});
 
 	$(".queue_item").click(function() {
