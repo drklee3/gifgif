@@ -249,7 +249,7 @@ exports.createGif = function(output_type) {
 		gif_vars['filename'] = npath.basename(file).replace(extension, ""); // filename without extension
 		gif_vars['file_path'] = npath.join(output_path, gif_vars['filename']);
 
-		var new_full_path = gif_vars['file_path'] + gif_vars['type'];
+		var new_full_path = gif_vars['file_path'] + "." + gif_vars['type'];
 
 		queue.add_queue(new_full_path, gif_vars['filename'], "starting")
 

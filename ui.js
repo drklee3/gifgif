@@ -322,7 +322,8 @@ $(document).ready(function() {
 		$("#queue_container").animate(css2, 500, 'easeOutQuint');
 	});
 
-	$(".queue_item").click(function() {
+	$("a.queue_item").click(function() {
+		console.log('click')
 		var file_path = $(this).text();
 		var path_without_file = npath.dirname(file_path);
 		queue.open_folder(path_without_file);
