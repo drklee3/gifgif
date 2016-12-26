@@ -109,7 +109,7 @@ exports.create_gfy = function(gif_vars) {
 			queue.update_queue_num("finish");
 
 			//delete temp files
-			io.delete_file(gif_vars['file_path'] + '_temp.png')
+			io.delete_file(gif_vars['file_path'] + '_temp.mp4')
 			console.log('gfy created!');
 		})
 		.save(gif_vars['file_path'] + '.mp4');
