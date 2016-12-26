@@ -4,9 +4,9 @@ $(document).ready(function() {
 
 
 	fs = require("fs");
-	io = require("./fs_func.js");
 	gifgif = require("./ffmpeg_func.js");
 	queue = require("./queue_func.js");
+	npath = require("path");
 
 
 
@@ -323,8 +323,9 @@ $(document).ready(function() {
 	});
 
 	$(".queue_item").click(function() {
-		var path = $(this).text();
-		queue.open_folder(path);
+		var file_path = $(this).text();
+		var path_without_file = npath.dirname(file_path);
+		queue.open_folder(path_without_file);
 	});
 
 });

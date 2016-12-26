@@ -195,4 +195,5 @@ td {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	max-width: 400px;
+	min-width: 153px;
 }

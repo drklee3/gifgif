@@ -1,4 +1,7 @@
+var exports = module.exports = {};
+
 fs = require("fs");
+var npath = require("path");
 
 /**
  * Check if file exists
@@ -6,7 +9,7 @@ fs = require("fs");
  * @param  {func} cb   callback function
  * @return {bool}        if path exists and is a file
  */
-function if_exist(file, cb) {
+exports.if_exist = function(file, cb) {
 	fs.stat(file, function fsStat(err, stats) {
 		if (err) {
 			if (err.code === 'ENOENT') {
@@ -19,7 +22,7 @@ function if_exist(file, cb) {
 	});
 }
 
-function create_file(file, cb) {
+exports.create_file = function(file, cb) {
 	fs.writeFile(file, "ayy lmao", function(err) {
 		if (err) {
 			return console.log(err);
@@ -28,16 +31,25 @@ function create_file(file, cb) {
 	}); 
 }
 
+exports.delete_file = function(file) {
+	fs.unlink(file, function(err) {
+		if (err) {
+			return console.log(err);
+		}
+		console.log('deleted file');
+	})
+}
+
 /**
  * Generates new unique filename 
  * @param  {string} file starting filename
  * @return {string}      new filename
  */
-function new_filename(file, callback) {
-	if_exist(file, function(err, isFile) {
+exports.new_filename = function(file, callback) {
+	exports.if_exist(file, function(err, isFile) {
 		if (isFile) { 						// if file exists
-			file = increment_file(file);	// generate new filename
-			new_filename(file, callback);	// check again if exists
+			file = exports.increment_file(file);	// generate new filename
+			exports.new_filename(file, callback);	// check again if exists
 		} else {
 			callback(file);					// function callback
 		}
@@ -47,13 +59,14 @@ function new_filename(file, callback) {
 /**
  * creates new numerated filename
  * @param  {string} file input file name
- * @return {string}      new file name with extension
+ * @return {string}      new file name with extension WITHOUT path
  */
-function increment_file(file) {
+exports.increment_file = function(file) {
 	var re = /(?:\.([^.]+))?$/;
 	var extension = re.exec(file)[0];
 
-	var filename = file.substring(file.lastIndexOf('/')+1).replace(extension, "");	// filename without extension
+	var filename = npath.basename(file).replace(extension, "");	// filename without extension
+	var filepath = npath.dirname(file);
 	var number_match = filename.match(/\d+$/); 						// returns null if no match
 
 	var filename_nonum = filename.replace(number_match, ""); 	// raw filename without number
@@ -65,8 +78,8 @@ function increment_file(file) {
 		number = 1;
 	}
 
-	var new_filename = filename_nonum + pad_num(number) + extension;
-	return new_filename;
+	var new_filename = filename_nonum + exports.pad_num(number) + extension;
+	return npath.join(filepath, new_filename);
 }
 
 /**
@@ -74,7 +87,7 @@ function increment_file(file) {
  * @param  {int} number input number to be padded
  * @return {string}        padded number
  */
-function pad_num(number) {
+exports.pad_num = function(number) {
 	var str = "" + number
 	var pad = "0000"
 	var padded = pad.substring(0, pad.length - str.length) + str
