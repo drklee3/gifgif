@@ -71,6 +71,9 @@ exports.modify_queue = function(id, status) {
 		case "finished":
 			var status_message = "<span style='color:#2ecc71'>finished</span>";
 			break;
+		case "error":
+			var status_message = "<span style='color:#e74c3c'>error</span>";
+			break;
 	}
 	$("#" + id + " > td:last").html(status_message);
 }

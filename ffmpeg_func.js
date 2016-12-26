@@ -43,6 +43,7 @@ exports.trim_video = function(gif_vars) {
 		.outputOptions(video_options)
 		.on('error', function(err) {
 			console.log('An error occurred: ' + err.message);
+			queue.modify_queue(gif_vars['filename'], "error");
 		})
 		.on('end', function() {
 			console.log('video trimmed!');
@@ -74,6 +75,7 @@ exports.create_gif = function(gif_vars) {
 		})
 		.on('error', function(err) {
 			console.log('An error occurred: ' + err.message);
+			queue.modify_queue(gif_vars['filename'], "error");
 		})
 		.on('end', function() {
 			queue.modify_queue(gif_vars['filename'], "finished");
@@ -103,6 +105,7 @@ exports.create_gfy = function(gif_vars) {
 		})
 		.on('error', function(err) {
 			console.log('An error occurred: ' + err.message);
+			queue.modify_queue(gif_vars['filename'], "error");
 		})
 		.on('end', function() {
 			queue.modify_queue(gif_vars['filename'], "finished");
@@ -128,6 +131,7 @@ exports.create_palette = function(gif_vars) {
 		.outputOptions(palette_options)
 		.on('error', function(err) {
 			console.log('An error occurred: ' + err.message);
+			queue.modify_queue(gif_vars['filename'], "error");
 		})
 		.on('end', function() {
 			console.log('palette created!');
