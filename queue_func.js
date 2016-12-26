@@ -8,6 +8,7 @@ var spawn = require('child_process');
  * @return {none}     
  */
 exports.open_folder = function(path) { 
+	console.log('opening folder');
 	spawn.exec('start "" "' + path + '"');
 }
 
@@ -18,8 +19,8 @@ exports.open_folder = function(path) {
  * @param {string} status initial status, should usually just be "starting"
  */
 exports.add_queue = function(path, id, status) {
-	var queue_item = "<tr id='" + id + "'><td>" + path + "</td><td>" + status + "</td></tr>";
-	$('#queue_table > tbody:first-child').prepend(queue_item);
+	var queue_item = "<tr id='" + id + "'><td><a href='#' class='queue_item'>" + path + "</a></td><td>" + status + "</td></tr>";
+	$('#queue_table > tbody').prepend(queue_item);
 }
 
 /**
@@ -71,5 +72,5 @@ exports.modify_queue = function(id, status) {
 			var status_message = "<span style='color:#2ecc71'>finished</span>";
 			break;
 	}
-	$("#" + id + "td:last-child").html(status_message);
+	$("#" + id + " > td:last").html(status_message);
 }

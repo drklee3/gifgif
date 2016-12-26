@@ -2,6 +2,9 @@ var exports = module.exports = {};
 
 ffmpeg = require('fluent-ffmpeg');
 queue = require("./queue_func.js");
+io = require("./fs_func.js");
+os = require('os');
+npath = require('path');
 
 exports.padNum = function(num) {
 	var s = num + ""
@@ -17,7 +20,7 @@ exports.formatTime = function(in_time) {
 	var min = Math.floor((in_time - (hour * 3600)) / 60);
 	var sec = in_time - (hour * 3600) - (min * 60);
 
-	var formated = padNum(hour) + ":" + padNum(min) + ":" + padNum(sec);
+	var formated = exports.padNum(hour) + ":" + exports.padNum(min) + ":" + exports.padNum(sec);
 	return formated;
 }
 
@@ -45,22 +48,23 @@ exports.trim_video = function(gif_vars) {
 			console.log('video trimmed!');
 			// CHOOSE BETWEEN GIF OR GFY after trim
 			if (gif_vars['type'] == 'gif') {
-				create_palette(gif_vars);
+				exports.create_palette(gif_vars);
 			} else {
-				create_gfy(gif_vars);
+				exports.create_gfy(gif_vars);
 			}
 		})
-		.save(gif_vars['filename'] + '_temp.mp4');
+		.save(gif_vars['file_path'] + '_temp.mp4');
 }
 
 exports.create_gif = function(gif_vars) {
+	// uses FILENAME as identifier, do not use path
 	queue.modify_queue(gif_vars['filename'], "gif");
 
 	var gif_options = '-filter_complex fps=' + gif_vars['fps'] + ',paletteuse=dither=sierra2_4a';
 
 	// CREATE GIF
-	var command = ffmpeg(gif_vars['filename'] + '_temp.mp4')
-		.addInput(gif_vars['filename'] + '_palette.png')
+	var command = ffmpeg(gif_vars['file_path'] + '_temp.mp4')
+		.addInput(gif_vars['file_path'] + '_palette.png')
 		.outputOptions([
 			'-v warning',
 			gif_options
@@ -73,9 +77,14 @@ exports.create_gif = function(gif_vars) {
 		})
 		.on('end', function() {
 			queue.modify_queue(gif_vars['filename'], "finished");
+			queue.update_queue_num("finish");
+
+			//delete temp files
+			io.delete_file(gif_vars['file_path'] + '_temp.mp4')
+			io.delete_file(gif_vars['file_path'] + '_palette.png')
 			console.log('gif created!');
 		})
-		.save(gif_vars['filename'] + '.gif');
+		.save(gif_vars['file_path'] + '.gif');
 }
 
 exports.create_gfy = function(gif_vars) {
@@ -87,7 +96,7 @@ exports.create_gfy = function(gif_vars) {
 		gfy_options += " -an"
 	}
 
-	var command = ffmpeg(gif_vars['filename'] + '_temp.mp4')
+	var command = ffmpeg(gif_vars['file_path'] + '_temp.mp4')
 		.outputOptions(gfy_options)
 		.on('start', function(commandLine) {
 			console.log('Spawned Ffmpeg with command: ' + commandLine);
@@ -97,9 +106,13 @@ exports.create_gfy = function(gif_vars) {
 		})
 		.on('end', function() {
 			queue.modify_queue(gif_vars['filename'], "finished");
+			queue.update_queue_num("finish");
+
+			//delete temp files
+			io.delete_file(gif_vars['file_path'] + '_temp.png')
 			console.log('gfy created!');
 		})
-		.save(gif_vars['filename'] + '.mp4');
+		.save(gif_vars['file_path'] + '.mp4');
 }
 
 exports.create_palette = function(gif_vars) {
@@ -108,7 +121,7 @@ exports.create_palette = function(gif_vars) {
 	var palette_options = '-vf fps=' + gif_vars['fps'] + ',palettegen';
 
 	// CREATE PALETTE
-	var command = ffmpeg(gif_vars['filename'] + '_temp.mp4')
+	var command = ffmpeg(gif_vars['file_path'] + '_temp.mp4')
 		.on('start', function(commandLine) {
 			console.log('Spawned Ffmpeg with command: ' + commandLine);
 		})
@@ -118,9 +131,9 @@ exports.create_palette = function(gif_vars) {
 		})
 		.on('end', function() {
 			console.log('palette created!');
-			create_gif(gif_vars);
+			exports.create_gif(gif_vars);
 		})
-		.save(gif_vars['filename'] + '_palette.png');
+		.save(gif_vars['file_path'] + '_palette.png');
 }
 
 exports.round_and_even = function(in_num) {
@@ -189,7 +202,7 @@ exports.scalevideo = function() {
 
 exports.createGif = function(output_type) {
 	// SET VARS
-	var gif_vars = {};
+	gif_vars = {};
 
 	gif_vars['type'] = output_type;
 
@@ -200,8 +213,8 @@ exports.createGif = function(output_type) {
 
 	gif_vars['scale_percentage'] = $('#scale_percentage').val() / 100;
 
-	gif_vars['scaled_width'] = round_and_even(gif_vars['width']*gif_vars['scale_percentage']);
-	gif_vars['scaled_height'] = round_and_even(gif_vars['height']*gif_vars['scale_percentage']);
+	gif_vars['scaled_width'] = exports.round_and_even(gif_vars['width']*gif_vars['scale_percentage']);
+	gif_vars['scaled_height'] = exports.round_and_even(gif_vars['height']*gif_vars['scale_percentage']);
 
 	gif_vars['scaled_size'] = gif_vars['scaled_width'] + ':' + gif_vars['scaled_height'];
 
@@ -213,27 +226,46 @@ exports.createGif = function(output_type) {
 	gif_vars['in_point'] = gif_params['in'].toFixed(3);
 	gif_vars['out_point'] = gif_params['out'].toFixed(3);
 
-	gif_vars['in_format'] = formatTime(gif_vars['in_point']);
-	gif_vars['duration'] = formatTime(gif_vars['out_point'] - gif_vars['in_point']);
+	gif_vars['in_format'] = exports.formatTime(gif_vars['in_point']);
+	gif_vars['duration'] = exports.formatTime(gif_vars['out_point'] - gif_vars['in_point']);
 
 	gif_vars['fps'] = $('#fps').val();
 
 	gif_vars['mute_audio'] = $('#mute_audio')[0].checked;
 
-	output_file = 'output.' + gif_vars['type'];
+	// save to desktop/gifgif
+	var output_path = npath.join(os.homedir(), 'Desktop', 'gifgif');
+
+	// full path and file
+	output_full_path = npath.join(output_path, 'output.' + gif_vars['type']);
 
 	$('#status').html('Creating gif...');
 
-	io.new_filename(output_file, function(file) {
+	io.new_filename(output_full_path, function(file) {
 
 		var re = /(?:\.([^.]+))?$/;
 		var extension = re.exec(file)[0];					// extension with dot
 
-		gif_vars['filename'] = file.replace(extension, ""); // filename without extension
+		gif_vars['filename'] = npath.basename(file).replace(extension, ""); // filename without extension
+		gif_vars['file_path'] = npath.join(output_path, gif_vars['filename']);
 
-		queue.add_queue("placeholder path", gif_vars['filename'], "starting")
-		trim_video(gif_vars);
-	})
+		var new_full_path = gif_vars['file_path'] + gif_vars['type'];
+
+		queue.add_queue(new_full_path, gif_vars['filename'], "starting")
+
+		// add to counter
+		queue.update_queue_num("add");
+
+		// check if path exists
+		io.if_exist(file, function(err, isFile) {
+			if (!isFile) { // if folder doesn't exist
+				fs.mkdir(npath.dirname(new_full_path), function() {
+					// start making the gif shit after creating folder
+					exports.trim_video(gif_vars);
+				})
+			}
+		});
+	});
 }
 
 
