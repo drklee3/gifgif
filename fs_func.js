@@ -4,7 +4,7 @@ fs = require("fs");
 var npath = require("path");
 
 /**
- * Check if file exists
+ * Check if exact file exists
  * @param  {path}   file path to file
  * @param  {func} cb   callback function
  * @return {bool}        if path exists and is a file
@@ -20,6 +20,26 @@ exports.if_exist = function(file, cb) {
 		}
 		return cb(null, stats.isFile());
 	});
+}
+
+
+/**
+ * checks if fileNAME exists in a directory. for checking if temp files exist
+ * @param  {string}   path   path to directory
+ * @param  {string}   search filename to search for
+ * @param  {func} 	cb     callback function
+ * @return {bool}          returns if found file or not
+ */
+exports.if_exists_in_dir = function(path, search, cb) {
+	fs.readdir(path, function(err, files) {
+		var found = false;
+		files.forEach(function(n) {
+			if (n.indexOf(search) >= 0) {
+				found = true;
+			} 
+		})
+		return cb(found);
+	})
 }
 
 exports.create_file = function(file, cb) {

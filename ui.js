@@ -18,6 +18,7 @@ $(document).ready(function() {
 		video_data['fps'] = video_data_raw['streams'][0]['r_frame_rate'];
 		video_data['width'] = video_data_raw['streams'][0]['width'];
 		video_data['height'] = video_data_raw['streams'][0]['height'];
+		video_data['bitrate'] = video_data_raw['format']['bit_rate'];
 
 		$('#fps').val(getFps(video_data['fps']).toFixed(3));
 		console.log(video_data)
@@ -276,7 +277,7 @@ $(document).ready(function() {
 
 	$('#create_gfy').click(function() {
 		gifgif.scalevideo();
-		gifgif.createGif('mp4');
+		gifgif.createGif('gfy');
 	});
 
 	var queue_status = false;
@@ -299,8 +300,11 @@ $(document).ready(function() {
 
 			var container_top = $(document).height() - $("#queue_content").height()
 			if (container_top <= 200) {
-				container_top = 200;
-				button_bottom = 650;
+				// change this val to adjust height for queue
+				var distance_from_top = 400;
+
+				container_top = distance_from_top;
+				button_bottom = 850 - distance_from_top;
 				$("#queue_container").css("overflow-y", "scroll")
 			} else {
 				$("#queue_container").css("overflow-y", "")
@@ -323,7 +327,6 @@ $(document).ready(function() {
 	});
 
 	$("tbody").on('click', 'a.queue_item', function() {
-		console.log('click')
 		var file_path = $(this).text();
 		var path_without_file = npath.dirname(file_path);
 		queue.open_folder(path_without_file);

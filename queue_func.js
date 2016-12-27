@@ -8,7 +8,6 @@ var spawn = require('child_process');
  * @return {none}     
  */
 exports.open_folder = function(path) { 
-	console.log('opening folder');
 	spawn.exec('start "" "' + path + '"');
 }
 
