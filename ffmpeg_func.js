@@ -27,12 +27,41 @@ exports.formatTime = function(in_time) {
 exports.trim_video = function(gif_vars) {
 	queue.modify_queue(gif_vars['filename'], "trim");
 
-	var video_options = '-filter_complex crop=' + gif_vars['crop'] + ',scale=' + gif_vars['scaled_size'] + ':flags=lanczos';
+	var filters = '-filter_complex crop=' + gif_vars['crop'] + ',scale=' + gif_vars['scaled_size'] + ':flags=lanczos';
 	var speed = gif_vars['speed'];
 
 	if (speed != 1) {
-		video_options += ",setpts=" + speed + "*PTS";
+		filters += ",setpts=" + speed + "*PTS";
 	}
+
+	video_options = [];
+
+	video_options.push(filters);
+
+	// default output file, temp for pre-gif
+	var output_file = gif_vars['file_path'] + '_temp.mp4'
+
+	// GFY OPTIONS
+
+	if (gif_vars['type'] == 'mp4' || gif_vars['type'] == 'webm') {
+		queue.modify_queue(gif_vars['filename'], "gfy");
+
+		if (gif_vars['mute_audio']) {
+			video_options.push('-an');
+		}
+
+		// set output files
+		if (gif_vars['type'] == 'mp4') {
+			output_file = gif_vars['file_path'] + '.mp4';
+		} else if (gif_vars['type'] == 'webm') {
+			output_file = gif_vars['file_path'] + '.webm';
+			// set options and bitrate for webm
+			video_options.push('-c:v libvpx');
+			video_options.push('-b:v ' + gif_vars['bitrate'] + "M");
+			video_options.push('-c:a libvorbis');
+		}
+
+	} 
 
 	var command = ffmpeg(path)
 		.on('start', function(commandLine) {
@@ -41,20 +70,24 @@ exports.trim_video = function(gif_vars) {
 		.setStartTime(gif_vars['in_format'])
 		.duration(gif_vars['duration'])
 		.outputOptions(video_options)
-		.on('error', function(err) {
+		.on('error', function(err, stdout, stderr) {
 			console.log('An error occurred: ' + err.message);
+			console.log("ffmpeg stdout:\n" + stdout);
+			console.log("ffmpeg stderr:\n" + stderr);
 			queue.modify_queue(gif_vars['filename'], "error");
 		})
 		.on('end', function() {
-			console.log('video trimmed!');
 			// CHOOSE BETWEEN GIF OR GFY after trim
 			if (gif_vars['type'] == 'gif') {
 				exports.create_palette(gif_vars);
+				console.log('video trimmed!');
 			} else {
-				exports.create_gfy(gif_vars);
+				queue.modify_queue(gif_vars['filename'], "finished");
+				queue.update_queue_num("finish");
+				console.log('gfy created!');
 			}
 		})
-		.save(gif_vars['file_path'] + '_temp.mp4');
+		.save(output_file);
 }
 
 exports.create_gif = function(gif_vars) {
@@ -82,20 +115,30 @@ exports.create_gif = function(gif_vars) {
 			queue.update_queue_num("finish");
 
 			//delete temp files
-			io.delete_file(gif_vars['file_path'] + '_temp.mp4')
-			io.delete_file(gif_vars['file_path'] + '_palette.png')
+			io.delete_file(gif_vars['file_path'] + '_temp.mp4');
+			io.delete_file(gif_vars['file_path'] + '_palette.png');
 			console.log('gif created!');
 		})
 		.save(gif_vars['file_path'] + '.gif');
 }
 
+// NO LONGER USED, DONE IN TRIM FUNC INSTEAD IN 1 STEP
 exports.create_gfy = function(gif_vars) {
 	queue.modify_queue(gif_vars['filename'], "gfy");
+
+	var gfy_type = gif_vars['gfy_type'];
 
 	var mute = gif_vars['mute_audio'];
 	var gfy_options = "-v warning";
 	if (mute) {
 		gfy_options += " -an"
+	}
+
+	if (gfy_type == 'mp4') {
+		var output_file = gif_vars['file_path'] + '.mp4';
+	} else if (gfy_type == 'webm') {
+		var output_file = gif_vars['file_path'] + '.webm';
+		gfy_options += " -c:v libvpx -b:v " + gif_vars['bitrate'] + "M -c:a libvorbis"
 	}
 
 	var command = ffmpeg(gif_vars['file_path'] + '_temp.mp4')
@@ -115,7 +158,7 @@ exports.create_gfy = function(gif_vars) {
 			io.delete_file(gif_vars['file_path'] + '_temp.mp4')
 			console.log('gfy created!');
 		})
-		.save(gif_vars['file_path'] + '.mp4');
+		.save(output_file);
 }
 
 exports.create_palette = function(gif_vars) {
@@ -236,6 +279,28 @@ exports.createGif = function(output_type) {
 	gif_vars['fps'] = $('#fps').val();
 
 	gif_vars['mute_audio'] = $('#mute_audio')[0].checked;
+
+	
+
+	var input_path = $('#inputFile')[0].files[0].path;
+
+	var re = /(?:\.([^.]+))?$/;
+	gif_vars['input_format'] = re.exec(input_path)[1];
+
+	if (gif_vars['type'] == 'gfy') {
+		// gfy format
+		if ($('#gfy_format_webm')[0].checked) {
+			gif_vars['type'] = 'webm';
+		} else if ($('#gfy_format_mp4')[0].checked) {
+			gif_vars['type'] = 'mp4';
+		}
+	}
+
+
+	// bitrate in mbps
+	gif_vars['bitrate'] = video_data['bitrate'] / 1000000;
+
+	
 
 	// save to desktop/gifgif
 	var output_path = npath.join(os.homedir(), 'Desktop', 'gifgif');
