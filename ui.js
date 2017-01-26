@@ -305,7 +305,10 @@ $(document).ready(function() {
 
 				container_top = distance_from_top;
 				button_bottom = 850 - distance_from_top;
-				$("#queue_container").css("overflow-y", "scroll")
+				$("#queue_container").css({
+					"overflow-y": "scroll",
+					"height": button_bottom
+				})
 			} else {
 				$("#queue_container").css("overflow-y", "")
 			}
