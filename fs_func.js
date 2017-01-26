@@ -31,14 +31,14 @@ exports.if_exist = function(file, cb) {
  * @return {bool}          returns if found file or not
  */
 exports.if_exists_in_dir = function(path, search, cb) {
-	fs.readdir(path, function(err, files) {
-		var found = false;
-		files.forEach(function(n) {
-			if (n.indexOf(search) >= 0) {
-				found = true;
+	fs.readdir(path, function(err, files) { // read dir
+		var found = false;					// default status
+		files.forEach(function(n) {			// check each file for matches
+			if (n.indexOf(search) >= 0) {	// if any found
+				found = true;				// set found to true
 			} 
 		})
-		return cb(found);
+		return cb(found);					// callback function, returns bool if found
 	})
 }
 
@@ -67,11 +67,11 @@ exports.delete_file = function(file) {
  */
 exports.new_filename = function(file, callback) {
 	exports.if_exist(file, function(err, isFile) {
-		if (isFile) { 						// if file exists
+		if (isFile) { 								// if file exists
 			file = exports.increment_file(file);	// generate new filename
 			exports.new_filename(file, callback);	// check again if exists
 		} else {
-			callback(file);					// function callback
+			callback(file);							// function callback
 		}
 	});
 }

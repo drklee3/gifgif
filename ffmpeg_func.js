@@ -320,6 +320,7 @@ exports.createGif = function(output_type) {
 
 		var new_full_path = gif_vars['file_path'] + "." + gif_vars['type'];
 
+		// add to queue in ui with starting status
 		queue.add_queue(new_full_path, gif_vars['filename'], "starting")
 
 		// add to counter
