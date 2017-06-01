@@ -1,5 +1,4 @@
 # gif
 it makes gifs
 
-1) clone
-2) npm install && npm start
+![preview](http://i.imgur.com/wRV0WNG.png)
