@@ -4,7 +4,9 @@
   "description": "makes gifs",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": "https://gitlab.com/tzuwy/gif",
   "keywords": [
@@ -15,6 +17,8 @@
   "license": "CC0-1.0",
   "dependencies": {
     "electron-prebuilt": "^1.2.0",
-    "fluent-ffmpeg": ">=2.1.0"
-  }
+    "fluent-ffmpeg": ">=2.1.0",
+    "snyk": "^1.41.1"
+  },
+  "snyk": true
 }
