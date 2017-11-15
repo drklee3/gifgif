@@ -6,12 +6,12 @@
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://gitlab.com/tzuwy/gif",
+  "repository": "https://github.com/drklee3/gifgif",
   "keywords": [
     "Electron",
     "gif"
   ],
-  "author": "tzuwy",
+  "author": "drklee3",
   "license": "CC0-1.0",
   "dependencies": {
     "electron-prebuilt": "^1.2.0",
